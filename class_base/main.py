@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, request, abort
 from forms.loginform import LoginForm
+import locale
 from data.users import User
 from forms.registerform import RegisterForm
 from data import db_session
@@ -9,6 +10,10 @@ from flask_login import login_user, LoginManager, current_user, login_required, 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+locale.setlocale(
+    category=locale.LC_ALL,
+    locale="Russian"
+)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -55,10 +60,17 @@ def register():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
+        if form.sex.data == "male":
+            form.sex.data = "Мужской"
+        else:
+            form.sex.data = "Женский"
         user = User(
             name=form.name.data,
+            sex=form.sex.data,
+            age=form.age.data,
             email=form.email.data,
             about=form.about.data
+
         )
         user.set_password(form.password.data)
         db_sess.add(user)
@@ -85,9 +97,19 @@ def index():
     return render_template("index.html", themes=themes)
 
 
-@app.route('/themes', methods=['GET', 'POST'])
+@app.route("/profile/<int:id>")
+def profile(id):
+    db_sess = db_session.create_session()
+    if current_user.is_authenticated:
+        user = db_sess.query(User).filter(User.id == id)[0]
+        themes = list(db_sess.query(Theme).filter(Theme.user_id == id))
+        return render_template("profile.html", user=user, themes=len(themes))
+    return abort(404)
+
+
+@app.route('/themes_add', methods=['GET', 'POST'])
 @login_required
-def add_news():
+def themes_add():
     form = ThemesForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -103,32 +125,22 @@ def add_news():
                            form=form)
 
 
-@app.route('/themes/<int:id>', methods=['GET', 'POST'])
+@app.route('/themes_edit/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit_themes(id):
+def themes_edit(id):
     form = ThemesForm()
-    if request.method == "GET":
-        db_sess = db_session.create_session()
-        themes = db_sess.query(ThemesForm).filter(Theme.id == id,
-                                                  Theme.user == current_user
-                                                  ).first()
-        if themes:
-            form.title.data = themes.title
-            form.content.data = themes.content
-            form.is_private.data = themes.is_private
-        else:
-            abort(404)
+
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         themes = db_sess.query(Theme).filter(Theme.id == id,
-                                             Theme.user == current_user
+                                             Theme.user_id == current_user.id
                                              ).first()
         if themes:
             themes.title = form.title.data
             themes.content = form.content.data
             themes.is_private = form.is_private.data
             db_sess.commit()
-            return redirect('/')
+            return redirect(f'/themes/{id}')
         else:
             abort(404)
     return render_template('themes.html',
@@ -141,12 +153,23 @@ def edit_themes(id):
 @login_required
 def themes_delete(id):
     db_sess = db_session.create_session()
-    news = db_sess.query(Theme).filter(Theme.id == id,
-                                       Theme.user == current_user
-                                       ).first()
-    if news:
-        db_sess.delete(news)
+    themes = db_sess.query(Theme).filter(Theme.id == id,
+                                         Theme.user_id == current_user.id
+                                         ).first()
+    if themes:
+        db_sess.delete(themes)
         db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
+
+
+@app.route('/themes/<int:id>', methods=['GET', 'POST'])
+def themes(id):
+    db_sess = db_session.create_session()
+    themes = db_sess.query(Theme).filter(Theme.id == id).first()
+    if themes:
+        return render_template("theme.html", themes=themes)
     else:
         abort(404)
     return redirect('/')

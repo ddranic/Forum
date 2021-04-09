@@ -12,7 +12,17 @@
 <header>
     <nav class="navbar navbar-light bg-light">
         {% if current_user.is_authenticated %}
-            <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
+            <div class="form-group">
+                <select class="form-control" id="classSelect" name="class" onchange="window.location.href=this.value">
+                  <option hidden>{{ current_user.name }}</option>
+                  <option value="/">Главная</option>
+                  <option value="/profile/{{ current_user.id }}">Профиль</option>
+                  <option>Темы</option>
+                  <option>Сообщения</option>
+                  <option>Настройки</option>
+                  <option value="/logout">Выход</option>
+                </select>
+             </div>
         {% else %}
             <p>
                 <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
@@ -20,7 +30,6 @@
             </p>
         {% endif %}
     </nav>
-    <h4>И на Марсе будут яблони цвести!</h4>
 </header>
 <!-- Begin page content -->
 <main role="main" class="container">

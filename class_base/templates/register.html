@@ -41,9 +41,27 @@
         {% endfor %}
     </p>
     <p>
+        {{ form.age.label }}<br>
+        {{ form.age(class="form-control") }}<br>
+        {% for error in form.password.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
         {{ form.about.label }}<br>
         {{ form.about(class="form-control") }}<br>
         {% for error in form.about.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.sex.label }}<br>
+        {{ form.sex(class="form") }}<br>
+        {% for error in form.sex.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
             </p>

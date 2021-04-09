@@ -10,7 +10,7 @@ class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    name = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
     age = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
     sex = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     speciality = sqlalchemy.Column(sqlalchemy.String, nullable=True)
@@ -19,11 +19,10 @@ class User(SqlAlchemyBase, UserMixin):
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
-    helps = sqlalchemy.Column(sqlalchemy.Integer, default=0)
+    votes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
 
     groups = orm.relation("Groups")
     themes = orm.relation("Theme", back_populates='user')
-
 
     def __repr__(self):
         return f'<Colonist> {self.id} {self.surname} {self.name}'

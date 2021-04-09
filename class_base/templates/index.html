@@ -1,24 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Записи в блоге</h1>
-{% for item in themes%}
+<h1>Темы</h1>
 {% if current_user.is_authenticated %}
-    <a href="themes" class="btn btn-secondary">Добавить Тему</a>
+    <a href="/themes_add" class="btn btn-secondary">
+        Добавить Тему
+    </a>
 {% endif %}
+{% for item in themes%}
+
 <div class="col-md6 border rounded">
-    <h2>{{item.title}}</h2>
-    <div>
-        {{item.content}}
-    </div>
+    <a href=/themes/{{item.id}}>{{item.title}}</a>
     <div>
         Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
         {% if current_user.is_authenticated and current_user == item.user %}
             <div>
-                <a href="/news/{{ item.id }}" class="btn btn-warning">
+                <a href="/themes_edit/{{ item.id }}" class="btn btn-warning">
                     Изменить
                 </a>
-                <a href="/news_delete/{{ item.id }}" class="btn btn-danger">
+                <a href="/themes_delete/{{ item.id }}" class="btn btn-danger">
                     Удалить
                 </a>
             </div>
