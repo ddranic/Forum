@@ -8,11 +8,10 @@
     </a>
 {% endif %}
 {% for item in themes%}
-
 <div class="col-md6 border rounded">
-    <a href=/themes/{{item.id}}>{{item.title}}</a>
+    <a href=/themes/{{item.id}}><b class="theme-title">{{item.title}}</b></a>
     <div>
-        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+        <span class="theme-info">{{item.user.name}}, {{item.created_date.strftime("%A, в %H:%M")}}</span>
         {% if current_user.is_authenticated and current_user == item.user %}
             <div>
                 <a href="/themes_edit/{{ item.id }}" class="btn btn-warning">

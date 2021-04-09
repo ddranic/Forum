@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if current_user.is_authenticated %}
+<h3>{{user.name}}</h3>
+<div class="col-md6 border rounded profile">
+    <p class="profile-info">Регистрация: <span class="profile-data">{{user.modified_date.strftime("%B %d, %Y")}}</span></p>
+    <p class="profile-info">Пол: <span class="profile-data">{{user.sex}}</span></p>
+    <p class="profile-info">Возраст: <span class="profile-data">{{user.age}}</span></p>
+</div>
+<div class="col-md6 border rounded profile">
+    <p class="profile-info"><span class="profile-data">{{user.votes}}</span>  Голосов</p>
+    <p class="profile-info"><span class="profile-data">{{themes}}</span>  Тем</p>
+</div>
+{% endif %}
+{% endblock %}
