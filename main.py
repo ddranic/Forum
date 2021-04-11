@@ -8,6 +8,7 @@ from data.themes import Theme
 from forms.themesform import ThemesForm
 from forms.profileform import ProfileForm
 from flask_login import login_user, LoginManager, current_user, login_required, logout_user
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -22,7 +23,9 @@ login_manager.init_app(app)
 
 def main():
     db_session.global_init("db/blogs.db")
-    app.run(debug=True)
+
+    port = 5000
+    app.run(host='127.0.0.1', port=port)
 
 
 @login_manager.user_loader
@@ -184,9 +187,9 @@ def themes_edit(id):
             abort(404)
     if themes:
         return render_template('themes_edit.html',
-                           title='Редактирование темы',
-                           form=form
-                           )
+                               title='Редактирование темы',
+                               form=form
+                               )
     else:
         abort(404)
 
