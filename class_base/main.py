@@ -6,6 +6,7 @@ from forms.registerform import RegisterForm
 from data import db_session
 from data.themes import Theme
 from forms.themesform import ThemesForm
+from forms.profileform import ProfileForm
 from flask_login import login_user, LoginManager, current_user, login_required, logout_user
 
 app = Flask(__name__)
@@ -21,7 +22,7 @@ login_manager.init_app(app)
 
 def main():
     db_session.global_init("db/blogs.db")
-    app.run()
+    app.run(debug=True)
 
 
 @login_manager.user_loader
@@ -89,15 +90,16 @@ def logout():
 @app.route("/")
 def index():
     db_sess = db_session.create_session()
-    if current_user.is_authenticated:
-        themes = db_sess.query(Theme).filter(
-            (Theme.user == current_user) | (Theme.is_private != True))
-    else:
-        themes = db_sess.query(Theme).filter(Theme.is_private != True)
+    if not current_user.is_authenticated:
+        return redirect("/login")
+
+    themes = db_sess.query(Theme).filter(
+        (Theme.user == current_user) | (Theme.is_private != True))
+
     return render_template("index.html", themes=themes)
 
 
-@app.route("/profile/<int:id>")
+@app.route("/profile/<int:id>", methods=["POST", "GET"])
 def profile(id):
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
@@ -105,6 +107,43 @@ def profile(id):
         themes = list(db_sess.query(Theme).filter(Theme.user_id == id))
         return render_template("profile.html", user=user, themes=len(themes))
     return abort(404)
+
+
+@app.route("/profile_edit/<int:id>", methods=["POST", "GET"])
+def profile_edit(id):
+    form = ProfileForm()
+
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id, current_user.id == User.id).first()
+    if form.validate_on_submit():
+        if user:
+            if form.password.data != form.password_again.data:
+                return render_template('profile_edit.html',
+                                       form=form,
+                                       title="Редактирование профиля",
+                                       message="Пароли не совпадают")
+
+            if form.sex.data == "male":
+                form.sex.data = "Мужской"
+            else:
+                form.sex.data = "Женский"
+
+            user.set_password(form.password.data)
+            user.password = form.password.data
+            user.age = form.age.data
+            user.sex = form.sex.data
+            user.about = form.about.data
+
+            db_sess.commit()
+            return redirect(f'/profile/{id}')
+        else:
+            abort(404)
+    if user:
+        return render_template('profile_edit.html',
+                               form=form,
+                               title="Редактирование профиля")
+    else:
+        abort(404)
 
 
 @app.route('/themes_add', methods=['GET', 'POST'])
@@ -121,7 +160,7 @@ def themes_add():
         db_sess.merge(current_user)
         db_sess.commit()
         return redirect('/')
-    return render_template('themes.html', title='Добавление темы',
+    return render_template('themes_edit.html', title='Добавление темы',
                            form=form)
 
 
@@ -130,23 +169,26 @@ def themes_add():
 def themes_edit(id):
     form = ThemesForm()
 
+    db_sess = db_session.create_session()
+    themes = db_sess.query(Theme).filter(Theme.id == id,
+                                         Theme.user_id == current_user.id
+                                         ).first()
     if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        themes = db_sess.query(Theme).filter(Theme.id == id,
-                                             Theme.user_id == current_user.id
-                                             ).first()
         if themes:
             themes.title = form.title.data
             themes.content = form.content.data
             themes.is_private = form.is_private.data
             db_sess.commit()
-            return redirect(f'/themes/{id}')
+            return redirect(f'/themes_get/{id}')
         else:
             abort(404)
-    return render_template('themes.html',
+    if themes:
+        return render_template('themes_edit.html',
                            title='Редактирование темы',
                            form=form
                            )
+    else:
+        abort(404)
 
 
 @app.route('/themes_delete/<int:id>', methods=['GET', 'POST'])
@@ -164,12 +206,12 @@ def themes_delete(id):
     return redirect('/')
 
 
-@app.route('/themes/<int:id>', methods=['GET', 'POST'])
-def themes(id):
+@app.route('/themes_get/<int:id>', methods=['GET', 'POST'])
+def themes_get(id):
     db_sess = db_session.create_session()
     themes = db_sess.query(Theme).filter(Theme.id == id).first()
     if themes:
-        return render_template("theme.html", themes=themes)
+        return render_template("themes_get.html", themes=themes)
     else:
         abort(404)
     return redirect('/')

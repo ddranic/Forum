@@ -3,13 +3,13 @@
 {% block content %}
 <h1>Темы</h1>
 {% if current_user.is_authenticated %}
-    <a href="/themes_add" class="btn btn-secondary">
+    <a href="/themes_add" class="btn btn-warning">
         Добавить Тему
     </a>
 {% endif %}
 {% for item in themes%}
-<div class="col-md6 border rounded">
-    <a href=/themes/{{item.id}}><b class="theme-title">{{item.title}}</b></a>
+<div class="col-md6 border rounded" onclick="window.location.href='/themes_get/{{item.id}}'">
+    <b class="theme-title">{{item.title}}</b>
     <div>
         <span class="theme-info">{{item.user.name}}, {{item.created_date.strftime("%A, в %H:%M")}}</span>
         {% if current_user.is_authenticated and current_user == item.user %}

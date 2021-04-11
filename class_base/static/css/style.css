@@ -7,19 +7,25 @@ body {
     background-color: #530FAD !important;
 }
 
+.btn {
+    margin: 5px !important;
+}
+
 .profile-info {
+    margin: 10px;
     font-size: 14pt;
-    color: gray;
+    color: black;
     font-family: Proxima;
 }
 
 .profile-data {
     font-size: 14pt;
-    color: #00A287;
+    color: white;
 }
 
 .col-md6.border.rounded {
     background-color: #5587c3;
+    word-wrap: break-word;
 }
 
 .col-md6.border.rounded:hover {

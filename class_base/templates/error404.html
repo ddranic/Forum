@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if current_user.is_authenticated %}
 <h3>{{user.name}}</h3>
 <div class="col-md6 border rounded">
     <p class="profile-info">Регистрация: <span class="profile-data">{{user.modified_date.strftime("%B %d, %Y")}}</span></p>
