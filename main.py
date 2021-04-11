@@ -12,10 +12,10 @@ from flask_login import login_user, LoginManager, current_user, login_required, 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-locale.setlocale(
-    category=locale.LC_ALL,
-    locale="ru_RU.utf8"
-)
+# locale.setlocale(
+    # category=locale.LC_ALL,
+    # locale="ru_RU.utf8"
+# )
 
 login_manager = LoginManager()
 login_manager.init_app(app)
