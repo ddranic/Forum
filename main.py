@@ -8,13 +8,13 @@ from data.themes import Theme
 from forms.themesform import ThemesForm
 from forms.profileform import ProfileForm
 from flask_login import login_user, LoginManager, current_user, login_required, logout_user
-import os
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 locale.setlocale(
     category=locale.LC_ALL,
-    locale="Russian"
+    locale="ru_RU.utf8"
 )
 
 login_manager = LoginManager()
