@@ -24,9 +24,6 @@ class User(SqlAlchemyBase, UserMixin):
     groups = orm.relation("Groups")
     themes = orm.relation("Theme", back_populates='user')
 
-    def __repr__(self):
-        return f'<Colonist> {self.id} {self.surname} {self.name}'
-
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
 

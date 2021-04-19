@@ -9,13 +9,12 @@ from forms.themesform import ThemesForm
 from forms.profileform import ProfileForm
 from flask_login import login_user, LoginManager, current_user, login_required, logout_user
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-# locale.setlocale(
-    # category=locale.LC_ALL,
-    # locale="ru_RU.utf8"
-# )
+locale.setlocale(
+    category=locale.LC_ALL,
+    locale="ru_RU.utf8"
+)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -26,6 +25,16 @@ def main():
 
     port = 5000
     app.run(host='127.0.0.1', port=port)
+
+
+@app.errorhandler(500)
+def notfound(e):
+    return render_template("error404.html")
+
+
+@app.errorhandler(404)
+def notfound2(e):
+    return render_template("error404.html")
 
 
 @login_manager.user_loader
@@ -96,10 +105,21 @@ def index():
     if not current_user.is_authenticated:
         return redirect("/login")
 
-    themes = db_sess.query(Theme).filter(
-        (Theme.user == current_user) | (Theme.is_private != True))
+    themes = db_sess.query(Theme).filter(Theme.user == current_user)
 
     return render_template("index.html", themes=themes)
+
+
+@app.route("/themes_by/<int:id>")
+def user_themes(id):
+    db_sess = db_session.create_session()
+    if not current_user.is_authenticated:
+        return redirect("/login")
+
+    themes = db_sess.query(Theme).filter(Theme.user_id == id)
+    user = db_sess.query(User).filter(User.id == id).first()
+
+    return render_template("user_themes.html", themes=themes, user=user)
 
 
 @app.route("/profile/<int:id>", methods=["POST", "GET"])
@@ -158,7 +178,6 @@ def themes_add():
         themes = Theme()
         themes.title = form.title.data
         themes.content = form.content.data
-        themes.is_private = form.is_private.data
         current_user.themes.append(themes)
         db_sess.merge(current_user)
         db_sess.commit()
@@ -180,7 +199,6 @@ def themes_edit(id):
         if themes:
             themes.title = form.title.data
             themes.content = form.content.data
-            themes.is_private = form.is_private.data
             db_sess.commit()
             return redirect(f'/themes_get/{id}')
         else:

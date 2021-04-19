@@ -1,55 +1,31 @@
 body {
    background-color: white;
    font-family: Proxima;
+   font-size: 12pt;
 }
-
-.bg-light {
-    background-color: #530FAD !important;
-}
-
-.btn {
-    margin: 5px !important;
-}
-
-.profile-info {
-    margin: 10px;
-    font-size: 14pt;
-    color: black;
-    font-family: Proxima;
-}
-
-.profile-data {
-    font-size: 14pt;
-    color: white;
-}
-
-.col-md6.border.rounded {
-    background-color: #5587c3;
-    word-wrap: break-word;
-}
-
-.col-md6.border.rounded:hover {
-    background-color: #4279bd;
-}
-
-.col-md6.border.rounded.profile {
-    background-color: white;
-}
-
 
 @font-face {
   font-family: Proxima;
   src: url(/static/fonts/ProximaNova-Semibold.ttf);
 }
 
-.theme-title {
-    margin: 10px;
-    color: white;
-    font-size: 14pt;
+.navbar {
+    position: fixed;
+    width: 100%;
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    background-color: rgba(240,240,240,0.8);
 }
 
-.theme-info {
-    margin: 10px;
-    color: black;
-    font-size: 12pt;
+.d-flex {
+    width: 280px;
+    float: left;
+}
+
+.list-group {
+    float: center;
+}
+
+.col-md6 {
+    float: center;
 }

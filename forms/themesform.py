@@ -6,6 +6,5 @@ from wtforms.validators import DataRequired, length
 
 class ThemesForm(FlaskForm):
     title = StringField('Заголовок', validators=[DataRequired(), length(max=70)])
-    content = TextAreaField("Содержание")
-    is_private = BooleanField("Личное")
+    content = TextAreaField("Содержание", validators=[DataRequired(), ])
     submit = SubmitField('Применить')

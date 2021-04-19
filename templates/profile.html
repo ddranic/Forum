@@ -2,6 +2,7 @@
 
 {% block content %}
 {% if current_user.is_authenticated %}
+<br><br><br>
 <h3>{{user.name}}</h3>
 <div class="col-md6 border rounded">
     <p class="profile-info">Регистрация: <span class="profile-data">{{user.modified_date.strftime("%B %d, %Y")}}</span></p>
@@ -12,7 +13,7 @@
     <p class="profile-info"><span class="profile-data">{{user.votes}}</span>  Голосов</p>
     <p class="profile-info"><span class="profile-data">{{themes}}</span>  Тем</p>
     {% if current_user.id == user.id %}
-    <a href="/profile_edit/{{ user.id }}" class="btn btn-warning">
+    <a href="/profile_edit/{{ user.id }}" class="btn btn-outline-warning">
         Изменить
     </a>
     {% endif %}
