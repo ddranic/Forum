@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Темы от {{ user.name }}</h1>
+{% for item in themes%}
+<div class="col-md6 border rounded" onclick="window.location.href='/themes_get/{{item.id}}'">
+    <b class="theme-title">{{item.title}}</b>
+    <div>
+        <span class="theme-info">{{user.name}}, {{item.created_date.strftime("%A, в %H:%M")}}</span>
+        {% if current_user.is_authenticated and current_user == user %}
+            <div>
+                <a href="/themes_edit/{{ item.id }}" class="btn btn-outline-warning">
+                    Изменить
+                </a>
+                <a href="/themes_delete/{{ item.id }}" class="btn btn-outline-danger">
+                    Удалить
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

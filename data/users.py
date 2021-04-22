@@ -17,6 +17,7 @@ class User(SqlAlchemyBase, UserMixin):
     group = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("groups.id"))
     email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True, nullable=True)
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    photo = sqlalchemy.Column(sqlalchemy.String, default="https://cdn0.iconfinder.com/data/icons/set-ui-app-android/32/8-512.png")
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     votes = sqlalchemy.Column(sqlalchemy.Integer, default=0)

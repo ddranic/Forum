@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>{{ title }}</h1>
-<form action="" method="post">
+<form action="" method="post" class="alert alert-primary">
     {{ form.hidden_tag() }}
     <p>
         {{ form.password.label }}<br>
@@ -44,6 +44,15 @@
         {{ form.sex.label }}<br>
         {{ form.sex(class="form") }}<br>
         {% for error in form.sex.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.photo.label }}<br>
+        {{ form.photo(class="form") }}<br>
+        {% for error in form.photo.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
             </p>

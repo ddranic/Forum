@@ -1,13 +1,16 @@
 from flask import Flask, render_template, redirect, request, abort
-from forms.loginform import LoginForm
+from flask_login import login_user, LoginManager, current_user, login_required, logout_user
 import locale
-from data.users import User
-from forms.registerform import RegisterForm
 from data import db_session
+
+from data.users import User
 from data.themes import Theme
+from data.comments import Comment
+from forms.loginform import LoginForm
+from forms.registerform import RegisterForm
 from forms.themesform import ThemesForm
 from forms.profileform import ProfileForm
-from flask_login import login_user, LoginManager, current_user, login_required, logout_user
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -45,6 +48,9 @@ def load_user(user_id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect("/")
+
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -61,6 +67,9 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect("/")
+
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
@@ -77,6 +86,7 @@ def register():
             form.sex.data = "Мужской"
         else:
             form.sex.data = "Женский"
+
         user = User(
             name=form.name.data,
             sex=form.sex.data,
@@ -107,7 +117,7 @@ def index():
 
     themes = db_sess.query(Theme).filter(Theme.user == current_user)
 
-    return render_template("index.html", themes=themes)
+    return render_template("index.html", themes=themes, sidebar_insist=True)
 
 
 @app.route("/themes_by/<int:id>")
@@ -119,7 +129,7 @@ def user_themes(id):
     themes = db_sess.query(Theme).filter(Theme.user_id == id)
     user = db_sess.query(User).filter(User.id == id).first()
 
-    return render_template("user_themes.html", themes=themes, user=user)
+    return render_template("index.html", themes=themes, theme_type=user.name, sidebar_insist=True)
 
 
 @app.route("/profile/<int:id>", methods=["POST", "GET"])
@@ -128,7 +138,7 @@ def profile(id):
     if current_user.is_authenticated:
         user = db_sess.query(User).filter(User.id == id)[0]
         themes = list(db_sess.query(Theme).filter(Theme.user_id == id))
-        return render_template("profile.html", user=user, themes=len(themes))
+        return render_template("profile.html", user=user, themes=len(themes), sidebar_insist=True)
     return abort(404)
 
 
@@ -144,7 +154,8 @@ def profile_edit(id):
                 return render_template('profile_edit.html',
                                        form=form,
                                        title="Редактирование профиля",
-                                       message="Пароли не совпадают")
+                                       message="Пароли не совпадают",
+                                       sidebar_insist=False)
 
             if form.sex.data == "male":
                 form.sex.data = "Мужской"
@@ -155,6 +166,7 @@ def profile_edit(id):
             user.password = form.password.data
             user.age = form.age.data
             user.sex = form.sex.data
+            user.photo = form.photo.data
             user.about = form.about.data
 
             db_sess.commit()
@@ -164,7 +176,8 @@ def profile_edit(id):
     if user:
         return render_template('profile_edit.html',
                                form=form,
-                               title="Редактирование профиля")
+                               title="Редактирование профиля",
+                               sidebar_insist=False)
     else:
         abort(404)
 
@@ -183,7 +196,7 @@ def themes_add():
         db_sess.commit()
         return redirect('/')
     return render_template('themes_edit.html', title='Добавление темы',
-                           form=form)
+                           form=form, sidebar_insist=False)
 
 
 @app.route('/themes_edit/<int:id>', methods=['GET', 'POST'])
@@ -206,7 +219,8 @@ def themes_edit(id):
     if themes:
         return render_template('themes_edit.html',
                                title='Редактирование темы',
-                               form=form
+                               form=form,
+                               sidebar_insist=False
                                )
     else:
         abort(404)

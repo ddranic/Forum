@@ -10,11 +10,7 @@ body {
 }
 
 .navbar {
-    position: fixed;
     width: 100%;
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    backdrop-filter: saturate(180%) blur(20px);
-    background-color: rgba(240,240,240,0.8);
 }
 
 .d-flex {
@@ -28,4 +24,17 @@ body {
 
 .col-md6 {
     float: center;
+}
+
+.theme-info {
+    color: black;
+}
+
+.list-group-item {
+    transition: transform .2s;
+}
+
+.list-group-item:hover {
+    filter: brightness(85%);
+    transform: scale(1.03);
 }

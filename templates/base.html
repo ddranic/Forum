@@ -10,12 +10,13 @@
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">MrM</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        {% if current_user.is_authenticated %}
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" href="../profile/{{ current_user.id }}">Профиль</a>
@@ -27,17 +28,28 @@
                 <a class="nav-link" href="../logout">Выход</a>
             </li>
         </ul>
+        {% else %}
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="../register">Зарегистрироваться</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Войти</a>
+            </li>
+        </ul>
+        {% endif %}
     </nav>
+    {% if current_user.is_authenticated and sidebar_insist %}
     <div class="d-flex flex-column p-3 bg-light">
         <br>
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
-            <a href="../themes_add/" class="btn btn-outline-warning">
+            <a href="../themes_add" class="btn btn-outline-warning">
                 Создать тему
             </a>
             Основное
             <li>
-                <a href="../" class="nav-link text-black">
+                <a href="../themes_by/{{ current_user.id }}" class="nav-link text-black">
                     Мои темы
                 </a>
             </li>
@@ -74,6 +86,7 @@
             </li>
         </ul>
     </div>
+    {% endif %}
 </header>
 <!-- Begin page content -->
 <main role="main" class="container">
