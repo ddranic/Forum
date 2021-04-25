@@ -16,6 +16,7 @@ body {
 .d-flex {
     width: 280px;
     float: left;
+    word-wrap: break-word;
 }
 
 .list-group {

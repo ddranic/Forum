@@ -7,7 +7,7 @@ class ProfileForm(FlaskForm):
     password = PasswordField('Новый пароль', validators=[DataRequired()])
     password_again = PasswordField('Повторите пароль', validators=[DataRequired()])
     age = StringField("Возраст", validators=[DataRequired()])
-    sex = RadioField("Пол", choices=[("male", "Мужской"), ("female", "Женский")], validators=[DataRequired()])
     photo = StringField("Ссылка на фото")
+    sex = RadioField("Пол", choices=[("male", "Мужской"), ("female", "Женский")], validators=[DataRequired()])
     about = TextAreaField("Немного о себе")
     submit = SubmitField('Изменить данные')

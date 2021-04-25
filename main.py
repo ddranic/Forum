@@ -2,7 +2,6 @@ from flask import Flask, render_template, redirect, request, abort
 from flask_login import login_user, LoginManager, current_user, login_required, logout_user
 import locale
 from data import db_session
-
 from data.users import User
 from data.themes import Theme
 from data.comments import Comment
@@ -10,7 +9,6 @@ from forms.loginform import LoginForm
 from forms.registerform import RegisterForm
 from forms.themesform import ThemesForm
 from forms.profileform import ProfileForm
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -22,21 +20,24 @@ locale.setlocale(
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+groups = {"offtop": "оффтоп", "computers": "компьютеры",
+          "games": "игры", "questions": "вопросы", "ideas": "идеи для форума", "other": "другое"}
+
 
 def main():
     db_session.global_init("db/blogs.db")
 
     port = 5000
-    app.run(host='127.0.0.1', port=port)
-
-
-@app.errorhandler(500)
-def notfound(e):
-    return render_template("error404.html")
+    app.run(host='127.0.0.1', port=port, debug=True)
 
 
 @app.errorhandler(404)
-def notfound2(e):
+def error404(e):
+    return render_template("error404.html")
+
+
+@app.errorhandler(500)
+def error505(e):
     return render_template("error404.html")
 
 
@@ -115,13 +116,29 @@ def index():
     if not current_user.is_authenticated:
         return redirect("/login")
 
-    themes = db_sess.query(Theme).filter(Theme.user == current_user)
+    themes = db_sess.query(Theme).all()
 
     return render_template("index.html", themes=themes, sidebar_insist=True)
 
 
+@app.route("/themes_group/<string:group>")
+def themes_group(group):
+    db_sess = db_session.create_session()
+
+    if not current_user.is_authenticated:
+        return redirect("/login")
+
+    themes = db_sess.query(Theme).filter(Theme.group == group)
+    if group in groups:
+        group = "в разделе: " + groups[group].capitalize()
+    else:
+        abort(404)
+
+    return render_template("index.html", themes=themes, sidebar_insist=True, name=group)
+
+
 @app.route("/themes_by/<int:id>")
-def user_themes(id):
+def themes_by(id):
     db_sess = db_session.create_session()
     if not current_user.is_authenticated:
         return redirect("/login")
@@ -191,39 +208,13 @@ def themes_add():
         themes = Theme()
         themes.title = form.title.data
         themes.content = form.content.data
+        themes.group = form.group.data.lower()
         current_user.themes.append(themes)
         db_sess.merge(current_user)
         db_sess.commit()
         return redirect('/')
-    return render_template('themes_edit.html', title='Добавление темы',
+    return render_template('themes_add.html', title='Добавление темы',
                            form=form, sidebar_insist=False)
-
-
-@app.route('/themes_edit/<int:id>', methods=['GET', 'POST'])
-@login_required
-def themes_edit(id):
-    form = ThemesForm()
-
-    db_sess = db_session.create_session()
-    themes = db_sess.query(Theme).filter(Theme.id == id,
-                                         Theme.user_id == current_user.id
-                                         ).first()
-    if form.validate_on_submit():
-        if themes:
-            themes.title = form.title.data
-            themes.content = form.content.data
-            db_sess.commit()
-            return redirect(f'/themes_get/{id}')
-        else:
-            abort(404)
-    if themes:
-        return render_template('themes_edit.html',
-                               title='Редактирование темы',
-                               form=form,
-                               sidebar_insist=False
-                               )
-    else:
-        abort(404)
 
 
 @app.route('/themes_delete/<int:id>', methods=['GET', 'POST'])
@@ -231,7 +222,7 @@ def themes_edit(id):
 def themes_delete(id):
     db_sess = db_session.create_session()
     themes = db_sess.query(Theme).filter(Theme.id == id,
-                                         Theme.user_id == current_user.id
+                                         Theme.user == current_user
                                          ).first()
     if themes:
         db_sess.delete(themes)
@@ -243,13 +234,25 @@ def themes_delete(id):
 
 @app.route('/themes_get/<int:id>', methods=['GET', 'POST'])
 def themes_get(id):
-    db_sess = db_session.create_session()
-    themes = db_sess.query(Theme).filter(Theme.id == id).first()
-    if themes:
-        return render_template("themes_get.html", themes=themes)
-    else:
-        abort(404)
-    return redirect('/')
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        theme = db_sess.query(Theme).filter(Theme.id == id).first()
+        if theme:
+            return render_template("themes_get.html", theme=theme)
+        else:
+            abort(404)
+        return redirect('/')
+    elif request.method == "POST":
+
+        content = request.form["comment"]
+
+        db_sess = db_session.create_session()
+        theme = db_sess.query(Theme).filter(Theme.id == id).first()
+        comment = Comment(content=content, user_id=current_user.id, theme_id=id)
+
+        db_sess.add(comment)
+        db_sess.commit()
+        return redirect(f"/themes_get/{id}")
 
 
 if __name__ == '__main__':

@@ -1,17 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="d-flex flex-column align-items-stretch bg-white" style="width: 500px;">
-  <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
+<br><br>
+<div class="d-flex flex-column align-items-stretch bg-white" style="width: 800px;">
+  <p class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
     <span>{{ theme.title }}</span>
-  </a>
-  <div class="list-group list-group-flush border-bottom scrollarea">
-{% for item in comments %}
-    <a href="../themes_get/{{ item.id }}" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">
+  </p>
+
+  <a href="../profile/{{ theme.user.id }}" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">
       <div class="d-flex w-100 align-items-center justify-content-between">
-        <strong>{{ item.content }}</strong>
+        <strong class="theme-info">{{ theme.user.name }} - {{ theme.created_date.strftime("%A, в %H:%M") }}</strong>
+        <strong class="text-warning">Автор</strong>
       </div>
-      <small class="theme-info">{{ item. }}, {{item.created_date.strftime("%A, в %H:%M")}}</small>
+    <span>{{ theme.content }}</span>
+
+    </a>
+  {% if current_user == theme.user %}
+    <a href="../themes_delete/{{ theme.id }}" class="btn btn-warning">
+      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
+      </svg>
+      <span>Удалить</span>
+    </a>
+  {% endif %}
+
+  <br>
+  <div class="input-group-prepend">
+    <form action="" method="POST" style="width: 100%;">
+      <input type="text" name="comment" class="form-control" placeholder="Напишите комментарий" aria-label="Username" aria-describedby>
+      <button type="submit" class="btn btn-warning" style="height: 40px;width: 100%;" name="send" value="press">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16">
+          <path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1z"></path>
+        </svg>
+        Отправить
+      </button>
+    </form>
+  </div>
+  <br>
+  <div class="list-group list-group-flush border-bottom scrollarea">
+{% for item in theme.comments %}
+    <a href="../profile/{{ item.user.id }}" class="list-group-item list-group-item-action active py-3 lh-tight" aria-current="true">
+      <div class="d-flex w-100 align-items-center justify-content-between">
+        <strong class="theme-info">{{ item.user.name }} - {{ item.created_date.strftime("%A, в %H:%M") }}</strong>
+      </div>
+    <span>{{ item.content }}</span>
+
     </a>
 {% endfor %}
   </div>

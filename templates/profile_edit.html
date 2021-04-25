@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<br><br><br>
 <h1>{{ title }}</h1>
 <form action="" method="post" class="alert alert-primary">
     {{ form.hidden_tag() }}
@@ -41,24 +42,24 @@
         {% endfor %}
     </p>
     <p>
-        {{ form.sex.label }}<br>
-        {{ form.sex(class="form") }}<br>
-        {% for error in form.sex.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-    <p>
         {{ form.photo.label }}<br>
-        {{ form.photo(class="form") }}<br>
+        {{ form.photo(class="form-control") }}<br>
         {% for error in form.photo.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
             </p>
         {% endfor %}
     </p>
-    <p>{{ form.submit(type="submit", class="btn btn-outline-primary") }}</p>
+    <p>
+        {{ form.sex.label }}<br>
+        {{ form.sex(class="form-check") }}<br>
+        {% for error in form.sex.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit(type="submit", class="btn btn-outline-warning") }}</p>
     {{message}}
 </form>
 {% endblock %}
