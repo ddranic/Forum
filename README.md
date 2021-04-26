@@ -1,4 +1,5 @@
 # MRM #
+![GitHub repo size](https://img.shields.io/github/repo-size/Rooooopert/Forum?color=green)
 > Начать общение, просто
 
 ### Установка ###
