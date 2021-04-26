@@ -1,5 +1,6 @@
 # MRM #
 ![GitHub repo size](https://img.shields.io/github/repo-size/Rooooopert/Forum?color=green) ![GitHub all releases](https://img.shields.io/github/downloads/Rooooopert/Forum/total) ![Packagist Stars](https://img.shields.io/packagist/stars/Rooooopert/Forum)
+
 MRM - простой форум, как заключительный проект Яндекс Лицея.
 > Начать общение, просто
 
