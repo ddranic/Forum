@@ -1,6 +1,5 @@
 # MRM #
 ![GitHub repo size](https://img.shields.io/github/repo-size/Rooooopert/Forum?color=green) 
-![GitHub commit activity](https://img.shields.io/github/commit-activity/y/Rooooopert/!%5BGitHub%20all%20releases%5D(https://img.shields.io/github/downloads/Rooooopert/https://github.com/Rooooopert/Forum/)
 > Начать общение, просто
 
 ### Установка ###
